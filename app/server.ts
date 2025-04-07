@@ -19,7 +19,7 @@ const port = process.env.PORT || 4000
 app.use(helmet())
 app.use(
 	cors({
-	  origin: true, // или '*' если не используешь credentials
+	  origin: '*', // или '*' если не используешь credentials
 	  credentials: true,
 	  allowedHeaders: ['Content-Type', 'Authorization']
 	})
