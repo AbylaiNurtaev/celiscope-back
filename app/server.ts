@@ -27,20 +27,26 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 app.use(cookieParser())
 
 // CORS с поддержкой любых origin и credentials
+// app.use(cors({
+//   origin: 'https://celiscope.ru',
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }))
+
 app.use(cors({
-  origin: (origin, callback) => {
-    callback(null, true)
-  },
+  origin: 'https://celiscope.ru',
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
 }))
 
-// Опциональный middleware для отладки CORS
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
-  res.header('Access-Control-Allow-Credentials', 'true')
-  next()
-})
+// Обработка preflight-запросов
+app.options('*', cors({
+  origin: 'https://celiscope.ru',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+}))
+
 
 // Контроллеры
 app.use('/api/auth', authController)
