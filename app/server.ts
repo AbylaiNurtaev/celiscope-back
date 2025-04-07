@@ -19,15 +19,12 @@ const port = process.env.PORT || 4000
 app.use(helmet())
 app.use(
 	cors({
-		origin: [
-			'https://t.me/celiscope_bot/celiscope',
-			'http://localhost:5173',
-			'https://celiscope.ru'
-		],
-		credentials: true,
-		allowedHeaders: ['Content-Type', 'Authorization']
+	  origin: true, // или '*' если не используешь credentials
+	  credentials: true,
+	  allowedHeaders: ['Content-Type', 'Authorization']
 	})
-)
+  )
+  
 app.use(express.json())
 app.use(cookieParser())
 
