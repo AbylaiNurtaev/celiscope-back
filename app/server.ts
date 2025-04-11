@@ -20,20 +20,20 @@ const port = process.env.PORT || 4000
 app.use(helmet())
 
 // Увеличиваем лимит для больших JSON-запросов
-app.use(express.json({ limit: '10mb' }))
-app.use(express.urlencoded({ extended: true, limit: '10mb' }))
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ extended: true, limit: '25mb' }))
 
 // Парсер cookies
 app.use(cookieParser())
 
 // CORS с поддержкой любых origin и credentials
-// app.use(cors({
-//   origin: ['https://celiscope.ru', 'http://localhost:5173'],
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-//   allowedHeaders: ['Content-Type', 'Authorization']
-// }))
-// app.options('*', cors()) // Важно! для обработки preflight
+app.use(cors({
+  origin: ['https://celiscope.ru', 'http://localhost:5173'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}))
+app.options('*', cors()) // Важно! для обработки preflight
 
 
 // Контроллеры
