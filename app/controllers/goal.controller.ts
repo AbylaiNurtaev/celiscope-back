@@ -62,7 +62,8 @@ router.post(
 					}
 
 					const fileBuffer = await sharp(imageBuffer)
-						.toFormat('jpg')
+						.rotate()
+						.toFormat('jpeg')
 						.toBuffer()
 					const imageUrl = await uploadFile(fileBuffer, `goal-${Date.now()}.jpg`)
 					data.imageUrl = imageUrl
@@ -143,7 +144,8 @@ router.post(
 				}
 
 				const fileBuffer = await sharp(imageBuffer)
-					.toFormat('jpg')
+					.rotate()
+					.toFormat('jpeg')
 					.toBuffer()
 				const goal = await goalService.completeGoal(user.id, goalId, fileBuffer)
 
@@ -254,7 +256,8 @@ router.put(
 					}
 
 					const fileBuffer = await sharp(imageBuffer)
-						.toFormat('jpg')
+						.rotate()
+						.toFormat('jpeg')
 						.toBuffer()
 					const imageUrl = await uploadFile(fileBuffer, `goal-${Date.now()}.jpg`)
 					data.imageUrl = imageUrl
