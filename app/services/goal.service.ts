@@ -106,12 +106,43 @@ class GoalService {
 			include: { goal: true }
 		})
 
-		if (!subGoal) throw new ApiError(404, 'Подцель не найдена')
-		if (subGoal.goal.userId !== userId) throw new ApiError(403, 'Нет доступа к этой подцели')
+		if (!subGoal) {
+			throw new ApiError(404, 'Sub-goal not found')
+		}
 
-		return prisma.subGoal.update({
+		if (subGoal.goal.userId !== userId) {
+			throw new ApiError(403, 'Not authorized to complete this sub-goal')
+		}
+
+		return await prisma.subGoal.update({
 			where: { id: subGoalId },
-			data: { isCompleted: true, completedAt: new Date() }
+			data: {
+				isCompleted: true,
+				completedAt: new Date()
+			}
+		})
+	}
+
+	async uncompleteSubGoal(userId: string, subGoalId: number) {
+		const subGoal = await prisma.subGoal.findUnique({
+			where: { id: subGoalId },
+			include: { goal: true }
+		})
+
+		if (!subGoal) {
+			throw new ApiError(404, 'Sub-goal not found')
+		}
+
+		if (subGoal.goal.userId !== userId) {
+			throw new ApiError(403, 'Not authorized to uncomplete this sub-goal')
+		}
+
+		return await prisma.subGoal.update({
+			where: { id: subGoalId },
+			data: {
+				isCompleted: false,
+				completedAt: null
+			}
 		})
 	}
 
@@ -137,92 +168,86 @@ class GoalService {
 		return goal
 	}
 
-	async updateGoal(userId: string, goalId: number, data: Partial<{
-		title: string
-		urgencyLevel: 'LOW' | 'AVERAGE' | 'HIGH'
-		specific: string
-		measurable: string
-		attainable: string
-		award: string
-		description: string
-		relevant: string
-		privacy: 'PRIVATE' | 'PUBLIC'
-		deadline: '3_MONTHS' | '6_MONTHS' | '1_YEAR'
-		imageUrl: string
-		subGoals: { description: string; deadline: Date }[]
-	}>) {
-		const goal = await prisma.goal.findFirst({
-			where: {
-				id: goalId,
-				userId
-			},
-			include: {
-				subGoals: {
-					orderBy: {
-						deadline: 'asc'
-					}
-				}
-			}
+	async updateGoal(userId: string, goalId: number, data: any) {
+		const goal = await prisma.goal.findUnique({
+			where: { id: goalId },
+			include: { subGoals: true }
 		})
 
 		if (!goal) {
-			throw new ApiError(404, 'Цель не найдена')
+			throw new ApiError(404, 'Goal not found')
 		}
 
-		const { subGoals, deadline, ...dataWithoutSubGoals } = data
-
-		const updateData = {
-			...dataWithoutSubGoals,
-			...(deadline ? { deadline: getDeadline(deadline) } : {})
+		if (goal.userId !== userId) {
+			throw new ApiError(403, 'Not authorized to update this goal')
 		}
 
-		const updatedGoal = await prisma.goal.update({
-			where: {
-				id: goalId
-			},
-			data: updateData,
-			include: {
-				subGoals: {
-					orderBy: {
-						deadline: 'asc'
-					}
-				}
-			}
-		})
+		// Преобразуем строковый дедлайн в дату
+		if (data.deadline) {
+			data.deadline = getDeadline(data.deadline)
+		}
 
-		if (subGoals) {
-			// Удаляем старые подцели
-			await prisma.subGoal.deleteMany({
-				where: {
-					goalId
-				}
-			})
+		// Сохраняем текущее значение privacy, если оно не указано в данных
+		if (!data.privacy) {
+			data.privacy = goal.privacy
+		}
 
-			// Создаем новые подцели
-			await Promise.all(
-				subGoals.map(subGoal =>
-					prisma.subGoal.create({
-						data: { goalId, ...subGoal }
-					})
-				)
+		// Если есть подцели, обновляем их
+		if (data.subGoals) {
+			// Создаем Map существующих подцелей для быстрого поиска
+			const existingSubGoalsMap = new Map(
+				goal.subGoals.map(subGoal => [subGoal.description, subGoal])
 			)
 
-			// Получаем обновленную цель с новыми подцелями
-			return await prisma.goal.findUnique({
+			// Обновляем или создаем подцели
+			await Promise.all(
+				data.subGoals.map(async (subGoal: any) => {
+					const existingSubGoal = existingSubGoalsMap.get(subGoal.description)
+					
+					if (existingSubGoal) {
+						// Если подцель существует, обновляем только описание и дедлайн
+						// Сохраняем статус выполнения
+						return prisma.subGoal.update({
+							where: { id: existingSubGoal.id },
+							data: {
+								description: subGoal.description,
+								deadline: subGoal.deadline
+							}
+						})
+					} else {
+						// Если это новая подцель, создаем её
+						return prisma.subGoal.create({
+							data: {
+								...subGoal,
+								goalId
+							}
+						})
+					}
+				})
+			)
+
+			// Удаляем подцели, которых нет в новом списке
+			const newSubGoalDescriptions = new Set(data.subGoals.map((sg: any) => sg.description))
+			await prisma.subGoal.deleteMany({
 				where: {
-					id: goalId
-				},
-				include: {
-					subGoals: {
-						orderBy: {
-							deadline: 'asc'
-						}
+					goalId,
+					description: {
+						notIn: Array.from(newSubGoalDescriptions) as string[]
 					}
 				}
 			})
+
+			// Удаляем subGoals из data, так как мы их уже обработали
+			delete data.subGoals
 		}
 
-		return updatedGoal
+		return await prisma.goal.update({
+			where: { id: goalId },
+			data,
+			include: {
+				subGoals: true
+			}
+		})
 	}
 }
 

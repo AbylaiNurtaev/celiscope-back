@@ -180,6 +180,27 @@ router.post(
 	}
 )
 
+router.post(
+	'/sub-goal/:subGoalId/uncomplete',
+	authMiddleware,
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const token = req.headers.authorization?.split(' ')[1]
+			const user: User = tokenService.validateAccess(token) as User
+			const subGoalId = parseInt(req.params.subGoalId)
+
+			if (isNaN(subGoalId)) {
+				throw new ApiError(400, 'Invalid sub-goal ID')
+			}
+
+			const subGoal = await goalService.uncompleteSubGoal(user.id, subGoalId)
+			res.status(200).json(subGoal)
+		} catch (err) {
+			next(err)
+		}
+	}
+)
+
 router.get(
 	'/:goalId',
 	authMiddleware,
