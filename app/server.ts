@@ -20,8 +20,8 @@ const port = process.env.PORT || 4000
 app.use(helmet())
 
 // Увеличиваем лимит для больших JSON-запросов
-app.use(express.json({ limit: '25mb' }));
-app.use(express.urlencoded({ extended: true, limit: '25mb' }))
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }))
 
 // Парсер cookies
 app.use(cookieParser())
