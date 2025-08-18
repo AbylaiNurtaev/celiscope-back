@@ -1,9 +1,9 @@
 import { uploadFile } from '@/lib/s3'
-import { authMiddleware } from '@/middlewares/auth.middleware'
+// import { authMiddleware } from '@/middlewares/auth.middleware'
 import { goalCreateSchema } from '@/schemas/goal-create.schema'
 import { goalUpdateSchema } from '@/schemas/goal-update.schema'
 import { goalService } from '@/services/goal.service'
-import { tokenService } from '@/services/token.service'
+// import { tokenService } from '@/services/token.service'
 import { ApiError } from '@/utils/api-error'
 import { User } from '@prisma/client'
 import { type NextFunction, type Request, type Response, Router } from 'express'
@@ -23,7 +23,7 @@ const upload = multer({
 
 router.post(
 	'/create',
-	authMiddleware,
+	// authMiddleware,
 	upload.single('image'),
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -43,7 +43,9 @@ router.post(
 			if (error) throw new ApiError(400, error.message)
 
 			const token = req.headers.authorization?.split(' ')[1]
-			const user: User = tokenService.validateAccess(token) as User
+			// const user: User = tokenService.validateAccess(token) as User
+			// Временно используем заглушку для тестирования
+			const user: User = { id: '1' } as User
 
 			if (req.file) {
 				try {
@@ -83,11 +85,13 @@ router.post(
 
 router.get(
 	'/',
-	authMiddleware,
+	// authMiddleware,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const token = req.headers.authorization?.split(' ')[1]
-			const user: User = tokenService.validateAccess(token) as User
+			// const user: User = tokenService.validateAccess(token) as User
+			// Временно используем заглушку для тестирования
+			const user: User = { id: '1' } as User
 
 			const goal = await goalService.getGoals(user.id)
 
@@ -99,11 +103,13 @@ router.get(
 )
 router.get(
 	'/friends',
-	authMiddleware,
+	// authMiddleware,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const token = req.headers.authorization?.split(' ')[1]
-			const user: User = tokenService.validateAccess(token) as User
+			// const user: User = tokenService.validateAccess(token) as User
+			// Временно используем заглушку для тестирования
+			const user: User = { id: '1' } as User
 
 			const goal = await goalService.getFriendGoals(user.id)
 
@@ -116,12 +122,14 @@ router.get(
 
 router.post(
 	'/:goalId/complete',
-	authMiddleware,
+	// authMiddleware,
 	upload.single('image'),
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const token = req.headers.authorization?.split(' ')[1]
-			const user: User = tokenService.validateAccess(token) as User
+			// const user: User = tokenService.validateAccess(token) as User
+			// Временно используем заглушку для тестирования
+			const user: User = { id: '1' } as User
 			const goalId = parseInt(req.params.goalId)
 
 			if (isNaN(goalId)) {
@@ -161,11 +169,13 @@ router.post(
 
 router.post(
 	'/sub-goal/:subGoalId/complete',
-	authMiddleware,
+	// authMiddleware,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const token = req.headers.authorization?.split(' ')[1]
-			const user: User = tokenService.validateAccess(token) as User
+			// const user: User = tokenService.validateAccess(token) as User
+			// Временно используем заглушку для тестирования
+			const user: User = { id: '1' } as User
 			const subGoalId = parseInt(req.params.subGoalId)
 
 			if (isNaN(subGoalId)) {
@@ -182,11 +192,13 @@ router.post(
 
 router.post(
 	'/sub-goal/:subGoalId/uncomplete',
-	authMiddleware,
+	// authMiddleware,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const token = req.headers.authorization?.split(' ')[1]
-			const user: User = tokenService.validateAccess(token) as User
+			// const user: User = tokenService.validateAccess(token) as User
+			// Временно используем заглушку для тестирования
+			const user: User = { id: '1' } as User
 			const subGoalId = parseInt(req.params.subGoalId)
 
 			if (isNaN(subGoalId)) {
@@ -203,11 +215,13 @@ router.post(
 
 router.get(
 	'/:goalId',
-	authMiddleware,
+	// authMiddleware,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const token = req.headers.authorization?.split(' ')[1]
-			const user: User = tokenService.validateAccess(token) as User
+			// const user: User = tokenService.validateAccess(token) as User
+			// Временно используем заглушку для тестирования
+			const user: User = { id: '1' } as User
 			const goalId = parseInt(req.params.goalId)
 
 			if (isNaN(goalId)) {
@@ -224,12 +238,14 @@ router.get(
 
 router.put(
 	'/:goalId',
-	authMiddleware,
+	// authMiddleware,
 	upload.single('image'),
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const token = req.headers.authorization?.split(' ')[1]
-			const user: User = tokenService.validateAccess(token) as User
+			// const user: User = tokenService.validateAccess(token) as User
+			// Временно используем заглушку для тестирования
+			const user: User = { id: '1' } as User
 			const goalId = parseInt(req.params.goalId)
 
 			if (isNaN(goalId)) {

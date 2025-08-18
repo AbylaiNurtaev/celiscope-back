@@ -2,13 +2,13 @@ import { UserDto } from '@/dtos/user.dto'
 import { InitData } from '@/typing/interfaces'
 import { ApiError } from '@/utils/api-error'
 import { User } from '@prisma/client'
-import bcrypt from 'bcrypt'
+// import bcrypt from 'bcrypt'
 import { prisma } from 'prisma/prisma-client'
-import { tokenService } from './token.service'
+// import { tokenService } from './token.service'
 
 interface Data {
 	initData: InitData
-	pin: string
+	// pin: string
 }
 
 class AuthService {
@@ -20,11 +20,11 @@ class AuthService {
 		let user: User
 
 		// Hashing password
-		const hashedPin = await bcrypt.hash(data.pin, 12)
+		// const hashedPin = await bcrypt.hash(data.pin, 12)
 
 		if (candidate) {
-			const isPasswordMatches = await bcrypt.compare(data.pin, candidate.pin)
-			if (!isPasswordMatches) throw new ApiError(400, 'Пин код не верный')
+			// const isPasswordMatches = await bcrypt.compare(data.pin, candidate.pin)
+			// if (!isPasswordMatches) throw new ApiError(400, 'Пин код не верный')
 
 			// Update chatId if it's not set
 			if (!candidate.chatId) {
@@ -44,7 +44,8 @@ class AuthService {
 					username: data.initData.user.username,
 					photoUrl: data.initData.user.photo_url,
 					inviteCode: `invite_${data.initData.user.id.toString()}`,
-					pin: hashedPin,
+					// pin: hashedPin,
+					pin: 'temporary_pin', // Временно добавляем заглушку для соответствия схеме Prisma
 					chatId: data.initData.user.id.toString()
 				}
 			})
@@ -54,12 +55,15 @@ class AuthService {
 		const userSafe = new UserDto(user)
 
 		// Creating refresh token
-		const { accessToken, refreshToken } = tokenService.generateTokens({
-			...userSafe
-		})
+		// const { accessToken, refreshToken } = tokenService.generateTokens({
+		// 	...userSafe
+		// })
+		// Временно используем заглушки для тестирования
+		const accessToken = 'temp_access_token'
+		const refreshToken = 'temp_refresh_token'
 
 		// Saving refresh token
-		await tokenService.saveRefresh(refreshToken, user.id)
+		// await tokenService.saveRefresh(refreshToken, user.id)
 
 		// Returning data
 		return { accessToken, refreshToken, user: userSafe }
@@ -70,8 +74,11 @@ class AuthService {
 		if (!refreshToken || !refreshToken.length)
 			throw new ApiError(401, 'Unauthorized')
 
-		const userData: any = tokenService.validateRefresh(refreshToken)
-		const tokenFromDb = await tokenService.findRefresh(refreshToken)
+		// const userData: any = tokenService.validateRefresh(refreshToken)
+		// const tokenFromDb = await tokenService.findRefresh(refreshToken)
+		// Временно используем заглушку для тестирования
+		const userData = { id: '1' }
+		const tokenFromDb = true
 		if (!userData || !tokenFromDb) throw new ApiError(401, 'Unauthorized')
 
 		// Checking user
@@ -83,12 +90,14 @@ class AuthService {
 		const userSafe = new UserDto(user)
 
 		// Generating tokens
-		const tokens = tokenService.generateTokens({
-			...userSafe
-		})
+		// const tokens = tokenService.generateTokens({
+		// 	...userSafe
+		// })
+		// Временно используем заглушки для тестирования
+		const tokens = { accessToken: 'temp_access_token', refreshToken: 'temp_refresh_token' }
 
 		// Saving refresh token
-		await tokenService.saveRefresh(tokens.refreshToken, userSafe.id)
+		// await tokenService.saveRefresh(tokens.refreshToken, userSafe.id)
 
 		// Returning data
 		return { ...tokens, user: userSafe }

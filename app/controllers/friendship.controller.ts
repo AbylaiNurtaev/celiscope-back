@@ -1,6 +1,6 @@
-import { authMiddleware } from '@/middlewares/auth.middleware'
+// import { authMiddleware } from '@/middlewares/auth.middleware'
 import { friendshipService } from '@/services/friendship.service'
-import { tokenService } from '@/services/token.service'
+// import { tokenService } from '@/services/token.service'
 import { ApiError } from '@/utils/api-error'
 import { NextFunction, Request, Response, Router } from 'express'
 
@@ -8,11 +8,13 @@ const router = Router()
 
 router.post(
 	'/add',
-	authMiddleware,
+	// authMiddleware,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const accessToken = req.headers.authorization.split(' ')[1]
-			const { id: userId } = tokenService.validateAccess(accessToken)
+			// const accessToken = req.headers.authorization.split(' ')[1]
+			// const { id: userId } = tokenService.validateAccess(accessToken)
+			// Временно используем заглушку для тестирования
+			const userId = '1'
 			const { friendId } = req.body
 
 			if (!friendId || !userId)
@@ -32,11 +34,13 @@ router.post(
 
 router.delete(
 	'/remove',
-	authMiddleware,
+	// authMiddleware,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const accessToken = req.headers.authorization.split(' ')[1]
-			const { id: userId } = tokenService.validateAccess(accessToken)
+			// const accessToken = req.headers.authorization.split(' ')[1]
+			// const { id: userId } = tokenService.validateAccess(accessToken)
+			// Временно используем заглушку для тестирования
+			const userId = '1'
 			const { friendId } = req.body
 
 			if (!friendId || !userId)
@@ -53,11 +57,13 @@ router.delete(
 
 router.get(
 	'/',
-	authMiddleware,
+	// authMiddleware,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const accessToken = req.headers.authorization.split(' ')[1]
-			const { id: userId } = tokenService.validateAccess(accessToken)
+			// const accessToken = req.headers.authorization.split(' ')[1]
+			// const { id: userId } = tokenService.validateAccess(accessToken)
+			// Временно используем заглушку для тестирования
+			const userId = '1'
 
 			const friends = await friendshipService.getFriends(userId)
 

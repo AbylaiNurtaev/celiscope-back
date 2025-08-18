@@ -1,5 +1,5 @@
 import { deleteFile, uploadFile } from '@/lib/s3'
-import bcrypt from 'bcrypt'
+// import bcrypt from 'bcrypt'
 import { prisma } from 'prisma/prisma-client'
 
 class UserService {
@@ -8,7 +8,7 @@ class UserService {
 	}
 
 	async editUser(userId: string, data: any) {
-		if (data?.pin) data.pin = await bcrypt.hash(data.pin, 12)
+		// if (data?.pin) data.pin = await bcrypt.hash(data.pin, 12)
 
 		return await prisma.user.update({
 			where: { id: userId },

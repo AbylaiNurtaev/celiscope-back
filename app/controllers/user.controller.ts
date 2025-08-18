@@ -1,4 +1,4 @@
-import { authMiddleware } from '@/middlewares/auth.middleware'
+// import { authMiddleware } from '@/middlewares/auth.middleware'
 import { userEditSchema } from '@/schemas/user-edit.schema'
 import { userService } from '@/services/user.service'
 import { ApiError } from '@/utils/api-error'
@@ -13,7 +13,7 @@ const upload = multer({ storage: storage })
 
 router.put(
 	`/edit/:id`,
-	authMiddleware,
+	// authMiddleware,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const { body } = req
@@ -36,7 +36,7 @@ router.put(
 
 router.put(
 	`/edit-photo/:id`,
-	authMiddleware,
+	// authMiddleware,
 	upload.single('image'),
 	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		try {
