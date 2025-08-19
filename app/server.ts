@@ -73,13 +73,13 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }))
 app.use(cookieParser())
 
 // CORS с поддержкой любых origin и credentials
-app.use(cors({
-  origin: ['https://celiscope.ru', 'http://localhost:5173'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}))
-app.options('*', cors()) // Важно! для обработки preflight
+// app.use(cors({
+//   origin: ['https://celiscope.ru', 'http://localhost:5173'],
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }))
+// app.options('*', cors()) // Важно! для обработки preflight
 
 
 // Контроллеры
