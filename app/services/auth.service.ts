@@ -4,7 +4,7 @@ import { ApiError } from '@/utils/api-error'
 import { User } from '@prisma/client'
 // import bcrypt from 'bcrypt'
 import { prisma } from 'prisma/prisma-client'
-// import { tokenService } from './token.service'
+import { tokenService } from './token.service'
 
 interface Data {
 	initData: InitData
@@ -44,8 +44,7 @@ class AuthService {
 					username: data.initData.user.username,
 					photoUrl: data.initData.user.photo_url,
 					inviteCode: `invite_${data.initData.user.id.toString()}`,
-					// pin: hashedPin,
-					pin: 'temporary_pin', // Временно добавляем заглушку для соответствия схеме Prisma
+					// pin: hashedPin, // PIN-код больше не требуется
 					chatId: data.initData.user.id.toString()
 				}
 			})
@@ -55,15 +54,12 @@ class AuthService {
 		const userSafe = new UserDto(user)
 
 		// Creating refresh token
-		// const { accessToken, refreshToken } = tokenService.generateTokens({
-		// 	...userSafe
-		// })
-		// Временно используем заглушки для тестирования
-		const accessToken = 'temp_access_token'
-		const refreshToken = 'temp_refresh_token'
+		const { accessToken, refreshToken } = tokenService.generateTokens({
+			...userSafe
+		})
 
 		// Saving refresh token
-		// await tokenService.saveRefresh(refreshToken, user.id)
+		await tokenService.saveRefresh(refreshToken, user.id)
 
 		// Returning data
 		return { accessToken, refreshToken, user: userSafe }
@@ -74,11 +70,8 @@ class AuthService {
 		if (!refreshToken || !refreshToken.length)
 			throw new ApiError(401, 'Unauthorized')
 
-		// const userData: any = tokenService.validateRefresh(refreshToken)
-		// const tokenFromDb = await tokenService.findRefresh(refreshToken)
-		// Временно используем заглушку для тестирования
-		const userData = { id: '1' }
-		const tokenFromDb = true
+		const userData: any = tokenService.validateRefresh(refreshToken)
+		const tokenFromDb = await tokenService.findRefresh(refreshToken)
 		if (!userData || !tokenFromDb) throw new ApiError(401, 'Unauthorized')
 
 		// Checking user
@@ -90,14 +83,12 @@ class AuthService {
 		const userSafe = new UserDto(user)
 
 		// Generating tokens
-		// const tokens = tokenService.generateTokens({
-		// 	...userSafe
-		// })
-		// Временно используем заглушки для тестирования
-		const tokens = { accessToken: 'temp_access_token', refreshToken: 'temp_refresh_token' }
+		const tokens = tokenService.generateTokens({
+			...userSafe
+		})
 
 		// Saving refresh token
-		// await tokenService.saveRefresh(tokens.refreshToken, userSafe.id)
+		await tokenService.saveRefresh(tokens.refreshToken, userSafe.id)
 
 		// Returning data
 		return { ...tokens, user: userSafe }

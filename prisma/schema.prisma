@@ -16,7 +16,7 @@ model User {
   username String @unique
   photoUrl String
 
-  pin String
+  pin String?
 
   inviteCode String @unique
 
