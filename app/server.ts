@@ -33,7 +33,7 @@ async function createTempUser() {
 					username: 'temp_user',
 					photoUrl: '',
 					inviteCode: 'invite_1',
-					pin: 'temporary_pin',
+					pin: null,
 					chatId: '1'
 				}
 			})
