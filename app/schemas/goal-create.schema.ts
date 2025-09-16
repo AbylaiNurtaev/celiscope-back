@@ -33,10 +33,10 @@ export const goalCreateSchema = Joi.object({
 		'string.min': 'Актуальность цели не может быть пустым',
 		'string.max': 'Актуальность цели должно содержать не более 250 символов'
 	}),
-	description: Joi.string().required().min(1).max(500).messages({
+	description: Joi.string().required().min(1).max(1000).messages({
 		'string.empty': 'Описание цели не может быть пустым',
 		'string.min': 'Описание цели не может быть пустым',
-		'string.max': 'Описание цели должно содержать не более 500 символов'
+		'string.max': 'Описание цели должно содержать не более 1000 символов'
 	}),
 	subGoals: Joi.array().items(
 		Joi.object({

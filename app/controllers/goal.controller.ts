@@ -70,6 +70,9 @@ router.post(
 				} catch (error) {
 					throw new ApiError(400, 'Ошибка при обработке изображения. Пожалуйста, загрузите изображение в поддерживаемом формате (JPG, PNG, HEIC)');
 				}
+			} else if (!data.imageUrl) {
+				// Если файл не загружен и не указан URL изображения, используем изображение по умолчанию
+				data.imageUrl = 'https://celiscope.ru/placeholder-image.jpg'
 			}
 
 			const goal = await goalService.createGoal(user.id, data)

@@ -18,7 +18,7 @@ class GoalService {
 			relevant: string
 			privacy: 'PRIVATE' | 'PUBLIC'
 			deadline: '3_MONTHS' | '6_MONTHS' | '1_YEAR'
-			imageUrl: string
+			imageUrl?: string
 			subGoals?: { description: string; deadline: Date }[]
 		}
 	) {
